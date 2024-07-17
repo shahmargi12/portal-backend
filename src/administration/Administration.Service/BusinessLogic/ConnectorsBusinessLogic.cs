@@ -432,4 +432,17 @@ public class ConnectorsBusinessLogic(
             size,
             _settings.MaxPageSize,
             portalRepositories.GetInstance<IConnectorsRepository>().GetConnectorsWithMissingSdDocument());
+
+    public async Task TriggerSelfDescriptionCreation()
+    {
+        var hasMissingSdDocumentConnectors = await portalRepositories.GetInstance<IConnectorsRepository>().HasAnyConnectorsWithMissingSelfDescription().ConfigureAwait(ConfigureAwaitOptions.None);
+        if (hasMissingSdDocumentConnectors)
+        {
+            var processStepRepository = portalRepositories.GetInstance<IProcessStepRepository>();
+            var processId = processStepRepository.CreateProcess(ProcessTypeId.SELF_DESCRIPTION_CREATION).Id;
+            processStepRepository.CreateProcessStep(ProcessStepTypeId.SELF_DESCRIPTION_CONNECTOR_CREATION, ProcessStepStatusId.TODO, processId);
+
+            await portalRepositories.SaveAsync().ConfigureAwait(ConfigureAwaitOptions.None);
+        }
+    }
 }

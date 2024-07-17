@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -17,9 +17,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
-namespace Org.Eclipse.TractusX.Portal.Backend.PortalBackend.DBAccess.Models;
-
-public record CompanyMissingSdDocumentData(
-    Guid CompanyId,
-    string Name
-);
+global using AutoFixture;
+global using AutoFixture.AutoFakeItEasy;
+global using FakeItEasy;
+global using FluentAssertions;
+global using Xunit;

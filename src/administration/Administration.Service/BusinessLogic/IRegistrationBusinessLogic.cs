@@ -130,6 +130,4 @@ public interface IRegistrationBusinessLogic
     /// </summary>
     /// <param name="processId">Id of the Process</param>
     Task RetriggerDeleteCentralUser(Guid processId);
-
-    Task TriggerSelfDescriptionCreation();
 }
