@@ -52,12 +52,16 @@ public class SdFactoryBusinessLogic(
         if (_settings.ClearinghouseConnectDisabled)
         {
             return new IApplicationChecklistService.WorkerChecklistProcessStepExecutionResult(
-                ProcessStepStatusId.DONE,
-                entry => entry.ApplicationChecklistEntryStatusId = ApplicationChecklistEntryStatusId.DONE,
+                ProcessStepStatusId.SKIPPED,
+                entry =>
+                {
+                    entry.ApplicationChecklistEntryStatusId = ApplicationChecklistEntryStatusId.DONE;
+                    entry.Comment = "Self description was skipped due to clearinghouse trigger is disabled";
+                },
                 new[] { ProcessStepTypeId.ACTIVATE_APPLICATION },
                 null,
                 true,
-                null
+                "Self description was skipped due to clearinghouse trigger is disabled"
             );
         }
 
