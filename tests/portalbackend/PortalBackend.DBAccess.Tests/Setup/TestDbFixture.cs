@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Org.Eclipse.TractusX.Portal.Backend.Framework.DateTimeProvider;
+using Org.Eclipse.TractusX.Portal.Backend.Framework.DBAccess;
 using Org.Eclipse.TractusX.Portal.Backend.Framework.Seeding;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.Migrations.Seeder;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities;
@@ -60,7 +61,7 @@ public class TestDbFixture : IAsyncLifetime
             x => x.MigrationsAssembly(typeof(BatchInsertSeeder).Assembly.GetName().Name)
                 .MigrationsHistoryTable("__efmigrations_history_portal")
         );
-        var context = new PortalDbContext(optionsBuilder.Options, new AuditHandlerV1(new FakeIdentityService(), dateTimeProvider ?? new UtcDateTimeProvider()));
+        var context = new PortalDbContext(optionsBuilder.Options, new AuditHandlerV1(new FakeIdentityService(), dateTimeProvider ?? new UtcDateTimeProvider()), new VersionedEntityHandler());
         await context.Database.EnsureCreatedAsync();
         foreach (var seedAction in seedActions)
         {
@@ -85,7 +86,7 @@ public class TestDbFixture : IAsyncLifetime
             x => x.MigrationsAssembly(typeof(BatchInsertSeeder).Assembly.GetName().Name)
                 .MigrationsHistoryTable("__efmigrations_history_portal")
         );
-        var context = new PortalDbContext(optionsBuilder.Options, new AuditHandlerV1(new FakeIdentityService(), new UtcDateTimeProvider()));
+        var context = new PortalDbContext(optionsBuilder.Options, new AuditHandlerV1(new FakeIdentityService(), new UtcDateTimeProvider()), new VersionedEntityHandler());
         await context.Database.MigrateAsync();
 
         var seederOptions = Options.Create(new SeederSettings

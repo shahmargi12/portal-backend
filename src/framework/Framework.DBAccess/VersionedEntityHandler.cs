@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -17,12 +17,18 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 namespace Org.Eclipse.TractusX.Portal.Backend.Framework.DBAccess;
 
-public static class VersionedEntityExtensions
+public class VersionedEntityHandler : IVersionedEntityHandler
 {
-    public static void UpdateVersion(this IVersionedEntity entity)
+    public void HandleVersionForChangedEntries(ChangeTracker changeTracker)
     {
-        entity.Version = Guid.NewGuid();
+        foreach (var item in changeTracker.Entries().Where(entry => entry.State is EntityState.Modified or EntityState.Deleted).OfType<IVersionedEntity>())
+        {
+            item.UpdateVersion();
+        }
     }
 }

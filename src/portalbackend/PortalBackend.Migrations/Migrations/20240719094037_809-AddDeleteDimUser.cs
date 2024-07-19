@@ -18,7 +18,6 @@
  ********************************************************************************/
 
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
 #nullable disable
 
@@ -32,20 +31,13 @@ namespace Org.Eclipse.TractusX.Portal.Backend.PortalBackend.Migrations.Migration
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTimeOffset>(
-                name: "lock_expiry_date",
-                schema: "portal",
-                table: "company_service_accounts",
-                type: "timestamp with time zone",
-                nullable: true);
-
             migrationBuilder.AddColumn<Guid>(
                 name: "version",
                 schema: "portal",
                 table: "company_service_accounts",
                 type: "uuid",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.InsertData(
                 schema: "portal",
@@ -53,37 +45,81 @@ namespace Org.Eclipse.TractusX.Portal.Backend.PortalBackend.Migrations.Migration
                 columns: new[] { "id", "label" },
                 values: new object[,]
                 {
-                    { 800, "DELETE_DIM_TECHNICAL_USER" },
-                    { 801, "AWAIT_DELETE_DIM_TECHNICAL_USER" },
-                    { 802, "RETRIGGER_DELETE_DIM_TECHNICAL_USER" }
+                    { 502, "AWAIT_CREATE_DIM_TECHNICAL_USER_RESPONSE" },
+                    { 503, "RETRIGGER_AWAIT_CREATE_DIM_TECHNICAL_USER_RESPONSE" },
+                    { 504, "BEFORE_DELETE_DIM_TECHNICAL_USER" },
+                    { 505, "DELETE_DIM_TECHNICAL_USER" },
+                    { 506, "AWAIT_DELETE_DIM_TECHNICAL_USER" },
+                    { 507, "RETRIGGER_DELETE_DIM_TECHNICAL_USER" }
                 });
+
+            migrationBuilder.Sql("UPDATE portal.process_steps SET process_step_type_id = 502 WHERE process_step_type_id = 114");
+            migrationBuilder.Sql("UPDATE portal.process_steps SET process_step_type_id = 503 WHERE process_step_type_id = 115");
+
+            migrationBuilder.DeleteData(
+                schema: "portal",
+                table: "process_step_types",
+                keyColumn: "id",
+                keyValue: 114);
+
+            migrationBuilder.DeleteData(
+                schema: "portal",
+                table: "process_step_types",
+                keyColumn: "id",
+                keyValue: 115);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
+            migrationBuilder.InsertData(
                 schema: "portal",
                 table: "process_step_types",
-                keyColumn: "id",
-                keyValue: 800);
+                columns: new[] { "id", "label" },
+                values: new object[,]
+                {
+                    { 114, "AWAIT_CREATE_DIM_TECHNICAL_USER_RESPONSE" },
+                    { 115, "RETRIGGER_AWAIT_CREATE_DIM_TECHNICAL_USER_RESPONSE" }
+                });
+
+            migrationBuilder.Sql("UPDATE portal.process_steps SET process_step_type_id = 114 WHERE process_step_type_id = 502");
+            migrationBuilder.Sql("UPDATE portal.process_steps SET process_step_type_id = 115 WHERE process_step_type_id = 503");
 
             migrationBuilder.DeleteData(
                 schema: "portal",
                 table: "process_step_types",
                 keyColumn: "id",
-                keyValue: 801);
+                keyValue: 502);
 
             migrationBuilder.DeleteData(
                 schema: "portal",
                 table: "process_step_types",
                 keyColumn: "id",
-                keyValue: 802);
+                keyValue: 503);
 
-            migrationBuilder.DropColumn(
-                name: "lock_expiry_date",
+            migrationBuilder.DeleteData(
                 schema: "portal",
-                table: "company_service_accounts");
+                table: "process_step_types",
+                keyColumn: "id",
+                keyValue: 504);
+
+            migrationBuilder.DeleteData(
+                schema: "portal",
+                table: "process_step_types",
+                keyColumn: "id",
+                keyValue: 505);
+
+            migrationBuilder.DeleteData(
+                schema: "portal",
+                table: "process_step_types",
+                keyColumn: "id",
+                keyValue: 506);
+
+            migrationBuilder.DeleteData(
+                schema: "portal",
+                table: "process_step_types",
+                keyColumn: "id",
+                keyValue: 507);
 
             migrationBuilder.DropColumn(
                 name: "version",

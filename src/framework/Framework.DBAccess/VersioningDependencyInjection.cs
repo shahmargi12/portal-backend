@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2022 Contributors to the Eclipse Foundation
+ * Copyright (c) 2024 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -17,12 +17,14 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Org.Eclipse.TractusX.Portal.Backend.Framework.DBAccess;
 
-public static class VersionedEntityExtensions
+public static class VersioningDependencyInjection
 {
-    public static void UpdateVersion(this IVersionedEntity entity)
+    public static IServiceCollection AddDbVersioning(this IServiceCollection services)
     {
-        entity.Version = Guid.NewGuid();
+        return services.AddTransient<IVersionedEntityHandler, VersionedEntityHandler>();
     }
 }

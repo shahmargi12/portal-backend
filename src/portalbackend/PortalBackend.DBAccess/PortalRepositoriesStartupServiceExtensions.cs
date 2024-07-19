@@ -1,5 +1,4 @@
 /********************************************************************************
- * Copyright (c) 2022 BMW Group AG
  * Copyright (c) 2022 Contributors to the Eclipse Foundation
  *
  * See the NOTICE file(s) distributed with this work for additional
@@ -21,6 +20,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Org.Eclipse.TractusX.Portal.Backend.Framework.DBAccess;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities.Auditing;
 
@@ -32,6 +32,7 @@ public static class PortalRepositoriesStartupServiceExtensions
     {
         services.AddScoped<IPortalRepositories, PortalRepositories>()
             .AddDbAuditing()
+            .AddDbVersioning()
             .AddDbContext<PortalDbContext>(o => o
                     .UseNpgsql(configuration.GetConnectionString("PortalDB")))
             .AddHealthChecks()

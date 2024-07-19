@@ -17,6 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ********************************************************************************/
 
+using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.DBAccess.Models;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.DBAccess.Repositories;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.DBAccess.Tests.Setup;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities;
@@ -92,9 +93,9 @@ public class ServiceAccountRepositoryTests : IAssemblyFixture<TestDbFixture>
         var result = await sut.GetOwnCompanyServiceAccountWithIamClientIdAsync(_validServiceAccountId, _validCompanyId);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.ServiceAccount.CompanyServiceAccountTypeId.Should().Be(CompanyServiceAccountTypeId.OWN);
-        result.ServiceAccount.CompanyServiceAccountKindId.Should().Be(CompanyServiceAccountKindId.INTERNAL);
+        result.Should().NotBeNull().And.Match<CompanyServiceAccountWithRoleDataClientId>(
+            x => x.CompanyServiceAccountTypeId == CompanyServiceAccountTypeId.OWN &&
+                 x.CompanyServiceAccountKindId == CompanyServiceAccountKindId.INTERNAL);
     }
 
     [Fact]

@@ -18,6 +18,7 @@
  ********************************************************************************/
 
 using Microsoft.EntityFrameworkCore;
+using Org.Eclipse.TractusX.Portal.Backend.Framework.DBAccess;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities.AuditEntities;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities.Auditing;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities.Entities;
@@ -37,16 +38,18 @@ namespace Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities;
 public class PortalDbContext : DbContext
 {
     private readonly IAuditHandler _auditHandler;
+    private readonly IVersionedEntityHandler _versionedEntityHandler;
 
     protected PortalDbContext()
     {
         throw new InvalidOperationException("IdentityService should never be null");
     }
 
-    public PortalDbContext(DbContextOptions<PortalDbContext> options, IAuditHandler auditHandler)
+    public PortalDbContext(DbContextOptions<PortalDbContext> options, IAuditHandler auditHandler, IVersionedEntityHandler versionedEntityHandler)
         : base(options)
     {
         _auditHandler = auditHandler;
+        _versionedEntityHandler = versionedEntityHandler;
     }
 
     public virtual DbSet<Address> Addresses { get; set; } = default!;
@@ -1517,6 +1520,8 @@ public class PortalDbContext : DbContext
 
     private void EnhanceChangedEntries()
     {
+        _versionedEntityHandler.HandleVersionForChangedEntries(ChangeTracker);
+
         _auditHandler.HandleAuditForChangedEntries(
             ChangeTracker.Entries().Where(entry =>
                 entry.State != EntityState.Unchanged && entry.State != EntityState.Detached &&

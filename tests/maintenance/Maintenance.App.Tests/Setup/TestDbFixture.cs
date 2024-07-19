@@ -18,6 +18,7 @@
  ********************************************************************************/
 
 using Microsoft.EntityFrameworkCore;
+using Org.Eclipse.TractusX.Portal.Backend.Framework.DBAccess;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.Migrations.Seeder;
 using Org.Eclipse.TractusX.Portal.Backend.PortalBackend.PortalEntities;
 using Org.Eclipse.TractusX.Portal.Backend.Tests.Shared;
@@ -59,7 +60,7 @@ public class TestDbFixture : IAsyncLifetime
             x => x.MigrationsAssembly(typeof(BatchInsertSeeder).Assembly.GetName().Name)
                 .MigrationsHistoryTable("__efmigrations_history_portal")
         );
-        var context = new PortalDbContext(optionsBuilder.Options, new NoAuditHandler());
+        var context = new PortalDbContext(optionsBuilder.Options, new NoAuditHandler(), new VersionedEntityHandler());
         await context.Database.EnsureCreatedAsync();
         foreach (var seedAction in seedActions)
         {
@@ -85,7 +86,7 @@ public class TestDbFixture : IAsyncLifetime
             x => x.MigrationsAssembly(typeof(BatchInsertSeeder).Assembly.GetName().Name)
                 .MigrationsHistoryTable("__efmigrations_history_portal")
         );
-        var context = new PortalDbContext(optionsBuilder.Options, new NoAuditHandler());
+        var context = new PortalDbContext(optionsBuilder.Options, new NoAuditHandler(), new VersionedEntityHandler());
         await context.Database.MigrateAsync();
         await context.SaveChangesAsync();
     }
